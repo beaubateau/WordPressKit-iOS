@@ -7,6 +7,7 @@
                                  @"ID": self.categoryID,
                                  @"name": self.name,
                                  @"parent": self.parentID,
+                                 @"slug": self.slug,
                                  };
     return [NSString stringWithFormat:@"<%@: %p> (%@)", NSStringFromClass([self class]), self, properties];
 }

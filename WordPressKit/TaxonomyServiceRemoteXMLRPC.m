@@ -298,6 +298,7 @@ static NSString * const TaxonomyXMLRPCOffsetParameter = @"offset";
     category.categoryID = [xmlrpcDictionary numberForKey:TaxonomyXMLRPCIDParameter];
     category.name = [xmlrpcDictionary stringForKey:TaxonomyXMLRPCNameParameter];
     category.parentID = [xmlrpcDictionary numberForKey:TaxonomyXMLRPCParentParameter];
+    category.slug = [xmlrpcDictionary stringForKey:TaxonomyXMLRPCSlugParameter];
     return category;
 }
 

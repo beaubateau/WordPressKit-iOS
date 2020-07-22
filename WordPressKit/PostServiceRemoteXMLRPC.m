@@ -87,7 +87,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
 {
     NSDictionary *extraParameters = [self parametersWithRemotePost:post];
     NSArray *parameters = [self XMLRPCArgumentsWithExtra:extraParameters];
-    [self.api callMethod:@"metaWeblog.newPost"
+    [self.api callMethod:@"wp.newPost"
               parameters:parameters
                  success:^(id responseObject, NSHTTPURLResponse *httpResponse) {
                      if ([responseObject respondsToSelector:@selector(numericValue)]) {

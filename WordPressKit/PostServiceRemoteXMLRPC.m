@@ -376,12 +376,12 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
     NSMutableDictionary *postParams = [NSMutableDictionary dictionary];
 
     [postParams setValueIfNotNil:post.type forKey:@"post_type"];
-    [postParams setValueIfNotNil:post.title forKey:@"title"];
-    [postParams setValueIfNotNil:post.content forKey:@"description"];
+    [postParams setValueIfNotNil:post.title forKey:@"post_title"];
+    [postParams setValueIfNotNil:post.content forKey:@"post_content"];
     [postParams setValueIfNotNil:post.date forKey:@"date_created_gmt"];
     [postParams setValueIfNotNil:post.password forKey:@"wp_password"];
     [postParams setValueIfNotNil:[post.URL absoluteString] forKey:@"permalink"];
-    [postParams setValueIfNotNil:post.excerpt forKey:@"mt_excerpt"];
+    [postParams setValueIfNotNil:post.excerpt forKey:@"post_excerpt"];
     [postParams setValueIfNotNil:post.slug forKey:@"wp_slug"];
     
     // To remove a featured image, you have to send an empty string to the API

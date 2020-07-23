@@ -140,7 +140,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
     NSDictionary *extraParameters = [self parametersWithRemotePost:post];
     NSMutableArray *parameters = [NSMutableArray arrayWithArray:[self XMLRPCArgumentsWithExtra:extraParameters]];
     [parameters replaceObjectAtIndex:0 withObject:post.postID];
-    [self.api callMethod:@"metaWeblog.editPost"
+    [self.api callMethod:@"wp.editPost"
               parameters:parameters
                  success:^(id responseObject, NSHTTPURLResponse *httpResponse) {
                      [self getPostWithID:post.postID success:^(RemotePost *fetchedPost) {

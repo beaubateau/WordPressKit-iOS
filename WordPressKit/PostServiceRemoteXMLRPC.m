@@ -125,7 +125,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
            failure:(void (^)(NSError *))failure
 {
     NSParameterAssert(post.postID.integerValue > 0);
-    
+
     if ([post.postID integerValue] <= 0) {
         if (failure) {
             NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Can't edit a post if it's not in the server"};
@@ -140,6 +140,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
     NSDictionary *extraParameters = [self parametersWithRemotePost:post];
     NSMutableArray *parameters = [NSMutableArray arrayWithArray:[self XMLRPCArgumentsWithExtra:extraParameters]];
     [parameters replaceObjectAtIndex:0 withObject:post.postID];
+    [parameters insertObject:post.postID atIndex:3];
     [self.api callMethod:@"wp.editPost"
               parameters:parameters
                  success:^(id responseObject, NSHTTPURLResponse *httpResponse) {
@@ -231,7 +232,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
     if (options.offset) {
         [remoteParams setObject:options.offset forKey:RemoteOptionKeyOffset];
     }
-    
+
     NSString *statusesStr = nil;
     if (options.statuses.count) {
         statusesStr = [options.statuses componentsJoinedByString:@","];
@@ -248,7 +249,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
         }
         [remoteParams setObject:orderStr forKey:RemoteOptionKeyOrder];
     }
-    
+
     NSString *orderByStr = nil;
     if (options.orderBy) {
         switch (options.orderBy) {
@@ -269,7 +270,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
                 break;
         }
     }
-    
+
     if (statusesStr.length) {
         [remoteParams setObject:statusesStr forKey:RemoteOptionKeyStatus];
     }
@@ -281,7 +282,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
     if (search.length) {
         [remoteParams setObject:search forKey:RemoteOptionKeySearch];
     }
-    
+
     return remoteParams.count ? [NSDictionary dictionaryWithDictionary:remoteParams] : nil;
 }
 
@@ -325,7 +326,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
     NSArray *terms = [xmlrpcDictionary arrayForKey:@"terms"];
     post.tags = [self tagsFromXMLRPCTermsArray:terms];
     post.categories = [self remoteCategoriesFromXMLRPCTermsArray:terms];
-    
+
     post.isStickyPost = [xmlrpcDictionary numberForKeyPath:@"sticky"];
 
     // Pick an image to use for display
@@ -383,7 +384,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
     [postParams setValueIfNotNil:[post.URL absoluteString] forKey:@"permalink"];
     [postParams setValueIfNotNil:post.excerpt forKey:@"post_excerpt"];
     [postParams setValueIfNotNil:post.slug forKey:@"wp_slug"];
-    
+
     // To remove a featured image, you have to send an empty string to the API
     if (post.postThumbnailID == nil) {
         // Including an empty string for wp_post_thumbnail generates
@@ -410,7 +411,7 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
         NSArray *categoryNames = [post.categories wp_map:^id(RemotePostCategory *category) {
             return category.name;
         }];
-        
+
         postParams[@"categories"] = categoryNames;
     }
 
@@ -453,3 +454,4 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
 }
 
 @end
+

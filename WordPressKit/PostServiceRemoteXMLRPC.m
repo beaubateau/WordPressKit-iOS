@@ -383,43 +383,47 @@ static NSString * const RemoteOptionValueOrderByPostID = @"ID";
     [postParams setValueIfNotNil:post.password forKey:@"wp_password"];
     [postParams setValueIfNotNil:[post.URL absoluteString] forKey:@"permalink"];
     [postParams setValueIfNotNil:post.excerpt forKey:@"post_excerpt"];
-    [postParams setValueIfNotNil:post.slug forKey:@"wp_slug"];
+    [postParams setValueIfNotNil:post.slug forKey:@"post_name"];
 
     // To remove a featured image, you have to send an empty string to the API
     if (post.postThumbnailID == nil) {
         // Including an empty string for wp_post_thumbnail generates
         // an "Invalid attachment ID" error in the call to wp.newPage
         if (existingPost) {
-            postParams[@"wp_post_thumbnail"] = @"";
+            postParams[@"post_thumbnail"] = @"";
         }
     } else if (!existingPost || post.isFeaturedImageChanged) {
         // Do not add this param to existing posts when the featured image has not changed.
         // Doing so results in a XML-RPC fault: Invalid attachment ID.
-        postParams[@"wp_post_thumbnail"] = post.postThumbnailID;
+        postParams[@"post_thumbnail"] = post.postThumbnailID;
     }
 
-    [postParams setValueIfNotNil:post.format forKey:@"wp_post_format"];
+    [postParams setValueIfNotNil:post.format forKey:@"post_format"];
     [postParams setValueIfNotNil:[post.tags componentsJoinedByString:@","] forKey:@"mt_keywords"];
 
     if (existingPost && post.date == nil) {
         // Change the date of an already published post to the current date/time. (publish immediately)
         // Pass the current date so the post is updated correctly
-        postParams[@"date_created_gmt"] = [NSDate date];
+        postParams[@"post_date_gmt"] = [NSDate date];
     }
+
+    NSMutableDictionary *terms = [NSMutableDictionary dictionary];
 
     if (post.categories) {
-        NSArray *categoryNames = [post.categories wp_map:^id(RemotePostCategory *category) {
-            return category.name;
+        NSArray *categoryIds = [post.categories wp_map:^id(RemotePostCategory *category) {
+            return category.categoryID;
         }];
 
-        postParams[@"categories"] = categoryNames;
+        terms[@"category"] = categoryIds;
     }
+
+    postParams[@"terms"] = terms;
 
     if ([post.metadata count] > 0) {
         postParams[@"custom_fields"] = post.metadata;
     }
 
-    postParams[@"wp_page_parent_id"] = post.parentID ? post.parentID.stringValue : @"0";
+    postParams[@"post_parent"] = post.parentID ? post.parentID : 0;
 
     // Scheduled posts need to sync with a status of 'publish'.
     // Passing a status of 'future' will set the post status to 'draft'
